@@ -1,0 +1,13 @@
+# Binary
+/docstartsym
+
+# Test output
+*.test
+
+# Go workspace file
+go.work
+
+# IDE and OS specific files
+.idea/
+.vscode/
+.DS_Store
