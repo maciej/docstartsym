@@ -48,9 +48,23 @@ func run(pass *analysis.Pass) (any, error) {
 					switch s := spec.(type) {
 					case *ast.TypeSpec:
 						// Handle type declarations
-						if !strings.HasPrefix(strings.TrimSpace(firstLine), s.Name.Name) {
+						validPrefixes := []string{
+							s.Name.Name,
+							"A " + s.Name.Name,
+							"An " + s.Name.Name,
+						}
+
+						hasValidPrefix := false
+						for _, prefix := range validPrefixes {
+							if strings.HasPrefix(strings.TrimSpace(firstLine), prefix) {
+								hasValidPrefix = true
+								break
+							}
+						}
+
+						if !hasValidPrefix {
 							pass.Reportf(d.Doc.Pos(),
-								"doc comment should start with the type name %q",
+								"doc comment should start with the type name %q, optionally preceded by 'A' or 'An'",
 								s.Name.Name)
 						}
 
