@@ -4,6 +4,10 @@ A Go analyzer that checks if documentation comments start with the name of the s
 
 > **Note**: This is an experimental project and is not recommended for production use at this time. It was created while exploring Cursor AI's capabilities.
 
+## Why?
+
+This linter enforces the Go documentation style guidelines as described in the [official Go documentation](https://tip.golang.org/doc/comment). According to these guidelines, "doc comments for types start with complete sentences naming the declared symbol." This convention helps maintain consistent and clear documentation across Go codebases.
+
 ## Installation
 
 ```bash
