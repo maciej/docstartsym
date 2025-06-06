@@ -36,17 +36,23 @@ func run(pass *analysis.Pass) (any, error) {
 				}
 
 			case *ast.GenDecl:
-				if d.Doc == nil {
-					continue
-				}
-
-				// Get the first line of the documentation
-				docText := d.Doc.Text()
-				firstLine := strings.Split(docText, "\n")[0]
-
 				for _, spec := range d.Specs {
+					var doc *ast.CommentGroup
 					switch s := spec.(type) {
 					case *ast.TypeSpec:
+						if s.Doc != nil {
+							doc = s.Doc
+						} else {
+							doc = d.Doc
+						}
+						if doc == nil {
+							continue
+						}
+
+						// Get the first line of the documentation
+						docText := doc.Text()
+						firstLine := strings.Split(docText, "\n")[0]
+
 						// Handle type declarations
 						validPrefixes := []string{
 							s.Name.Name,
@@ -63,16 +69,29 @@ func run(pass *analysis.Pass) (any, error) {
 						}
 
 						if !hasValidPrefix {
-							pass.Reportf(d.Doc.Pos(),
+							pass.Reportf(doc.Pos(),
 								"doc comment should start with the type name %q, optionally preceded by 'A' or 'An'",
 								s.Name.Name)
 						}
 
 					case *ast.ValueSpec:
+						if s.Doc != nil {
+							doc = s.Doc
+						} else {
+							doc = d.Doc
+						}
+						if doc == nil {
+							continue
+						}
+
+						// Get the first line of the documentation
+						docText := doc.Text()
+						firstLine := strings.Split(docText, "\n")[0]
+
 						// Handle var and const declarations
 						for _, name := range s.Names {
 							if !strings.HasPrefix(strings.TrimSpace(firstLine), name.Name) {
-								pass.Reportf(d.Doc.Pos(),
+								pass.Reportf(doc.Pos(),
 									"doc comment should start with the %s name %q",
 									getDeclType(d.Tok), name.Name)
 							}
